@@ -32,8 +32,9 @@ let prod1= "manga"
 let prod2= "maçã"
 let precman= 4
 let precmac= 3
+let osdois= precmac+precman
 
-console.log("temos a "+ prod1+" ,com o preço de: "+precman+" ,e tambem temos a"+prod2+" com o preço de: "+precmac+" .Se alguém quiser cobrar os dois, gastará "+(precmac+precman))
+console.log("temos a "+ prod1+" ,com o preço de: "+precman+" ,e tambem temos a"+prod2+" com o preço de: "+precmac+" .Se alguém quiser cobrar os dois, gastará "+ osdois)
 
 
 //atividade 6
@@ -77,13 +78,17 @@ let seg= min*60
 console.log("temos cerca de "+hora+ " em minutos ela fica em " +min+ " minutos,e em segundo fica "+seg+" segundos")
 
 //atividade 11
-let batatas= 10
-let cenoura= 5
+let var1= 10
+let var2= 5
+let var3= var1
+let var2= var1
+let var2= var3
+console.log("a variavel 1 é"+ var2 + "e a variavel 2 é"+ var1)
 
 //atividade 12
 let dist= 50 
-let litroqui= 1/13
 let litro=10
 let prelitro= 6.00
+let kmlitro= dist/litro
 
-console.log("O carro tinha que percorrer "+dist+ " KM de distancia"+" sabendo que ele gasta "+litroqui+" de litro por KM. Dessa forma precisava de "+ (litroqui/dist) + "litros. Ele tem "+litro+" litros, gastando cerca de R$" + prelitro + "por 1 litro. Dessa forma gastou"+(prelitro*litro))
+console.log("o carro percorreu "+ dist+ " gastando cerca de "+ kmlitro + " KM/L "+ " sabendo que o litro da gasolina custa R$ "+prelitro+" ele usou "+ kmlitro+ " KM/L dessa forma sabemos que ele pagou "+ (dist/kmlitro*prelitro))
