@@ -1,0 +1,98 @@
+
+<head>
+<body>
+
+<h1>OctoPODE dominar o mundo</h1>
+
+<p>Domine o mundo como um molusco marinho. Venda quadros, ganhe dinheiro e status para dominar o mundo.</p>
+<p>Você tem <strong id="quantquadro">0</strong> quadros</p>
+
+<button id="butao" onclick="fazerquadro()">Fazer quadros</button>
+
+
+
+<ul>
+   <li>Studio influente (Custo: <span id="custo-studio">25</span>) <button onclick="studioinfluente()">Comprar</button></li>
+   <li>Título de conde (Custo: <span id="custo-tit">100</span>) <button onclick="titconde()">Comprar</button></li>
+   <li>Patentes militares (Custo: <span id="custo-pate">1500</span>) <button onclick="patentemilitar()">Comprar</button></li>
+   <li>Clube de Bilderberg (Custo: <span id="custo-clube">5000</span>) <button onclick="clubebi()">Comprar</button></li>
+</ul>
+
+<script>
+let quadro = 0;
+let quadroclique = 1;
+
+let studi = 25;
+let tit = 100;
+let pate = 1500;
+let clube = 5000;
+
+
+function butao() {
+const butao= document.getElementById("butao")
+butao.style.backgroundImage= "src = ";
+
+
+
+}
+
+function atualizarTela() {
+    document.getElementById("quantquadro").innerHTML = quadro;
+    document.getElementById("custo-studio").innerHTML = studi;
+    document.getElementById("custo-tit").innerHTML = tit;
+    document.getElementById("custo-pate").innerHTML = pate;
+    document.getElementById("custo-clube").innerHTML = clube;
+}
+
+function fazerquadro() {
+    quadro += quadroclique; 
+    atualizarTela();
+}
+
+function studioinfluente() {
+    if (quadro < studi) {
+        alert("Quantidade de quadros insuficiente");
+    } else {
+        quadro -= studi; 
+        quadroclique += 2;        
+        studi += parseInt(studi * 0.2); 
+        atualizarTela();
+    }
+}
+
+function titconde() {
+    if (quadro < tit) {
+        alert("Quantidade de quadros insuficiente");
+    } else {
+        quadro -= tit;         
+        quadroclique += 5; 
+        tit += parseInt(tit * 0.3); 
+        atualizarTela(); 
+    }
+}
+
+function patentemilitar() {
+    if (quadro < pate) {
+        alert("Quantidade de quadros insuficiente");
+    } else {
+        quadro -= pate; 
+        quadroclique += 10;         
+        pate += parseInt(pate * 0.4);
+        atualizarTela(); 
+    }
+}
+
+function clubebi() {
+    if (quadro < clube) {
+        alert("Quantidade de quadros insuficiente");
+    } else {
+        quadro -= clube; 
+        quadroclique += 25;         
+        clube += parseInt(clube * 0.5);
+        atualizarTela();  
+    }
+}
+</script>
+
+</body>
+</head>

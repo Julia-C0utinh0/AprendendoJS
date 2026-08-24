@@ -1,100 +1,46 @@
 <title> HTML com Script </title>
+
 </head>
+
 <body>
     <h1>HTML com script</h1>
     <p>Aplicando programação dentro do html</p>
-    <button> Ver mensagem </button>
+    <button onclick="mostrarmensagem()"> Não clique </button>
 
+    <hr/>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <p> Clique no botão</p>
+    <button onclick="contador()">Clique em MIMMM</button>
     
+    <script>
+
+    let cliques= 0 
+
+    if (cliques > 10){
+        console.log("pare")
+    }
+
+    f
+        function contador(){
+            cliques= cliques + 1
+            alert("Voce clicou "+ cliques +" vezes!")
+        }
+         
+        function mostrarmensagem(){
+            console.log("Hello World")
+            console.log("Misturando HTML e Javascript")
+
+            let resposta= prompt("Não clique no botão")
+
+            if(resposta == não){
+                alert=("PARE DE CLICAR")
+            } else{
+                alert("Ótimo, realmente não faça isso mais ")
+            }
+      
+            }
+
+    </script>
+ 
 </body>
+</html>
