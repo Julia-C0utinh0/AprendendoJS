@@ -1,7 +1,7 @@
 
 <head>
 <body>
-
+<link rel="stylesheet" href="08_lindin.css">
 <h1>OctoPODE dominar o mundo</h1>
 
 <p>Domine o mundo como um molusco marinho. Venda quadros, ganhe dinheiro e status para dominar o mundo.</p>
@@ -18,6 +18,12 @@
    <li>Clube de Bilderberg (Custo: <span id="custo-clube">5000</span>) <button onclick="clubebi()">Comprar</button></li>
 </ul>
 
+<p>Entre com uma conta para ganhar 1000 quadros<button onclick="resgrecompensa()">Resgatar recompensa</button></p>
+<p>Faça seu Login </p>
+
+<div class="button">
+<a href="09_painel.html">Página de Login</a>
+</div>
 <script>
 let quadro = 0;
 let quadroclique = 1;
@@ -28,6 +34,30 @@ let pate = 1500;
 let clube = 5000;
 
 
+
+
+
+let salvaquadro=localStorage.getItem("quadrosalvo")
+salvaquadro=quadro
+localStorage.setItem("quadrosalvo")
+
+
+
+
+
+
+
+function resgrecompensa(){
+    if (localStorage.getItem("autenticado") == 1){
+        alert("Recompensa concedida")
+        quadro += 1000
+        document.getElementById("quantquadro").innerHTML=quadro
+    }else{"Faça o login pra isso :)"};
+    atualizarTela
+}
+
+
+
 function butao() {
 const butao= document.getElementById("butao")
 butao.style.backgroundImage= "src = ";
@@ -35,6 +65,8 @@ butao.style.backgroundImage= "src = ";
 
 
 }
+
+
 
 function atualizarTela() {
     document.getElementById("quantquadro").innerHTML = quadro;
@@ -48,6 +80,14 @@ function fazerquadro() {
     quadro += quadroclique; 
     atualizarTela();
 }
+
+function recompchega(){
+    if(resgrecompensa >= 2)
+    alert("Sem mais recompensas")
+}
+
+
+
 
 function studioinfluente() {
     if (quadro < studi) {

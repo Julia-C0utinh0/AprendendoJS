@@ -1,0 +1,155 @@
+:root {
+  --bg-dark: #0d1b1e;
+  --text-main: #e8e6d9;
+  --text-muted: #cfcabf;
+  --accent-gold: #d9a441;
+  --accent-gold-hover: #f0bb55;
+  --accent-teal: #8fd3c7;
+  --wood-dark: #3b2a1a;
+  
+  --item-social: #8fd3c7;
+  --item-militar: #c1543f;
+  --item-secreto: #a67bd1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: "Georgia", serif;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+h1 {
+  color: var(--accent-teal);
+  font-size: 2.5em;
+  text-shadow: 0 0 10px rgba(143, 211, 199, 0.5);
+  margin-bottom: 0.5em;
+}
+
+p {
+  max-width: 600px;
+  margin: 10px auto;
+  color: var(--text-muted);
+}
+
+/* ---------- CONTADOR DE QUADROS ---------- */
+#contador {
+  font-size: 1.4em;
+  margin: 20px 0;
+}
+
+#quantquadro {
+  color: var(--accent-gold);
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+/* ---------- BOTÃO PRINCIPAL EM FORMATO DE QUADRO ---------- */
+#butao {
+  display: inline-block;
+  background-color: var(--wood-dark);
+  border: 10px solid var(--accent-gold);
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(217, 164, 65, 0.4);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+
+#butao:hover {
+  box-shadow: 0 0 35px rgba(217, 164, 65, 0.7);
+}
+
+#butao:active {
+  transform: scale(0.96);
+}
+
+#butao:focus-visible {
+  outline: 3px solid var(--accent-teal);
+  outline-offset: 4px;
+}
+
+#butao img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  border: 3px solid #1a1109;
+  pointer-events: none;
+}
+
+#butao span {
+  display: block;
+  margin-top: 8px;
+  color: #f0e6d2;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* ---------- LISTA DE UPGRADES ---------- */
+ul {
+  list-style: none;
+  padding: 0;
+  max-width: 520px;
+  margin: 30px auto;
+}
+
+li {
+  background-color: #14282b;
+  border: 1px solid #3a5a55;
+  border-left: 6px solid var(--accent-teal);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+li:hover {
+  transform: translateX(4px);
+}
+
+.item-social {
+  border-left-color: var(--item-social);
+}
+
+.item-militar {
+  border-left-color: var(--item-militar);
+}
+
+.item-secreto {
+  border-left-color: var(--item-secreto);
+}
+
+li button {
+  background-color: var(--accent-gold);
+  color: var(--bg-dark);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 10px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+li button:hover:not(:disabled) {
+  background-color: var(--accent-gold-hover);
+}
+
+li button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

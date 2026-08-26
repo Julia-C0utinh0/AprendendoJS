@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Painel administrativo</title>
+</head>
+<body>
+
+<h1>Crud</h1>
+<p> Create (inserir)</p>
+<p> Read (buscar)</p>
+<p> Update (alterar)</p>
+<p> Delete (remover)</p>
+
+<hr/>
+
+<input id="fagundes" placeholder="Digite seu besouro">
+<button onclick="inserir()">Salvar</button>
+
+<ul id="listabeso">    
+</ul>
+
+<script>
+
+//Dados mockados
+let besouro = ["Dynastes","Cassidinae","Cerambycidae"] //Array ou vetor
+
+buscartud()
+
+function buscartud(){
+    let html=""
+    besouro.map(i => html += "<li>" + i + " <button>➕</button> <button>❌</button> </li>")    
+    
+    // => arrow function (função do tipo seta)
+    
+    document.getElementById("listabeso").innerHTML=html
+}
+
+function inserir(){
+    let novoBesouro = document.getElementById("fagundes").value
+    besouro = besouro.concat(novoBesouro)
+    console.log(besouro)
+    buscartud()
+}
+
+function inserir(){
+    let novoBesouro = document.getElementById("fagundes").value
+
+    if(novoBesouro.trim().length < 3){
+        alert("NENHUM NOME DE BESOURO TEM 3 LETRAS")
+        return
+    }
+
+   
+    if(novoBesouro == "invalido"){
+        alert("Tente de novo....vai....")
+        return
+    }
+
+    besouro = besouro.concat(novoBesouro)
+    console.log(besouro)
+    buscartud()
+    
+    document.getElementById("fagundes").value = ""
+}
+
+
+
+
+
+function apagar(){
+
+}
+
+
+
+
+
+8
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
+
+// => arrow function

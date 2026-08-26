@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<hr/>
+<title>Painel administrativo</title>
+</head>
+<body>
+
+
+<div id="some" style="display: block;">
+
+<form>
+<h1 style="color: rgb(122, 39, 104);"> Login</h1>
+<p>Digite seu usuário</p>
+
+<input id="inpusu"/>
+
+<p>Digite sua senha:</p>
+<input id="inpsenha" type="password"/>
+<button onclick="somesome"()>Sair da conta</button>
+
+<p>Vá para a página do jogo!</p>
+<a href="08_octopodes.html">Página do jogo</a>
+</div>
+
+
+<br/>
+
+
+<hr>
+
+
+<div id="painel" style="display: none;">
+
+<h1> Painel administrativo</h1>
+
+<p> Voce esta logado como <strong> administrador</strong></p>
+<button onclick="logout()">Sair da conta</button>
+
+
+</div>
+
+
+
+<script>
+
+veriflogin
+
+
+function veriflogin(){
+
+    let autenticado=localStorage.getItem("autenticado")
+
+    if(autenticado == 1){
+        
+    document.getElementById("painel").style.display = "block"
+    document.getElementById("some").style.display = "none"
+
+ }}
+
+//busca e popula as variaeis com os valores dos inputs
+
+ function autenticar(){
+    let usuario= document.getElementById("inpusu").value
+    let senha= document.getElementById("inpsenha").value
+
+
+    if(usuario.trim().length <3 ){
+        alert("Voce nao tem esse nome de usuário...")
+    return
+    }
+
+     if(senha.length ==0 ){
+        alert("Senha terrivel...")
+    return
+    }
+
+
+    if(usuario!= "administrador"){
+        alert("incorreto")
+        return
+    }
+
+    if(senha!= "123123"){
+        alert("incorreto")
+        return
+    }
+
+
+    localStorage.setItem("autenticado", 1)
+
+
+
+//visivel ou invisivel do painel
+ document.getElementById("painel").style.display = "block"
+ document.getElementById("some").style.display = "none"
+ }
+
+function somesome(){
+
+    localStorage.removeItem("autenticado")
+    document.getElementById("painel").style.display= "none"
+    document.getElementById("some").style="block"
+}
+ 
+
+
+ 
+</script>
+
+</form>
+
+<button onclick="autenticar() ">Entrar</button>
+</body>
+</html>
