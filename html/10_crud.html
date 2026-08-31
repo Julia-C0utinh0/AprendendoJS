@@ -17,10 +17,7 @@
 <input id="fagundes" placeholder="Digite seu besouro">
 <button onclick="inserir()">Salvar</button>
 
-
-<button style="display:none";>Salvar alterações</button>
-
-
+<button style="display:none;">Salvar alterações</button>
 
 <ul id="listabeso">    
 </ul>
@@ -28,39 +25,33 @@
 <script>
 //Dados mockados
 
-
-
-
 let besouro = ["Dynastes","Cassidinae","Cerambycidae"] //Array ou vetor
 
-
 buscartud()
-
 
 function buscartud(){
     let html=""
 
-    besouro.map(i => html += `<li> ${i} <button onclick='atualizar("${i}")' >🖊</button>  <button onclick'apagar("${i}")>❌</button> </li>`)     
+    besouro.map(i => html += `<li> ${i} <button onclick='atualizar("${i}")'>🖊</button> <button onclick='remover("${i}")'>❌</button> </li>`)    
     
     document.getElementById("listabeso").innerHTML=html
-
 }
-
-    // => arrow function (função do tipo seta)
-    // usa o aspas simples '' por ele querer fechar as aspas ""
-
-
-
 
 function inserir(){
     let novoBesouro = document.getElementById("fagundes").value
 
+
+    // Exemplo de uso dentro da função inserir():
+if (besouro.includes(novoBesouro)) {
+    alert("Este besouro já está na lista!")
+    return
+}
+
     if(novoBesouro.trim().length < 3){
-        alert("NENHUM NOME DE BESOURO TEM 3 LETRAS")
+        alert("NENHUM NOME DE BESOURO TEM MENOS DE 3 LETRAS")
         return
     }
 
-   
     if(novoBesouro == "invalido"){
         alert("Tente de novo....vai....")
         return
@@ -73,41 +64,20 @@ function inserir(){
     document.getElementById("fagundes").value = ""
 }
 
-
-
-function remover(besouro){
-let resposta= confirm("Tem certea que deseja remover")if (resposta==false){
-    return
+function remover(nomeBesouro){
+    let resposta = confirm("Tem certeza que deseja remover?")
+    if (resposta == false){
+        return
+    }
+    
+    besouro = besouro.filter(item => item !== nomeBesouro)
+    buscartud()
 }
-let posirem=novoBesouro.index
-}
-
-
-
-
-
-
-function atualizar(besouro){
-    document.getElementById("fagundes").value= besouro
-    document.getElementById(botao)
-
-
-}
-
-
-function salvaralt(){
-    let besouro= document.getElementById().value=besouro
-}
-
-
-
-
-
-
-
 </script>
 </body>
 </html>
+
+
 
 
 
