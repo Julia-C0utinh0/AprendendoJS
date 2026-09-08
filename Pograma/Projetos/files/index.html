@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Timers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ====== NAVEGAÇÃO LATERAL ====== -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-mark">⏱</span>
+        <span class="sidebar-brand-text">Painel</span>
+      </div>
+
+      <button class="nav-item is-active" data-view="inicio">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 11.5 12 4l8 7.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Início</span>
+      </button>
+
+      <button class="nav-item" data-view="novo-timer">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4l3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Novo timer</span>
+      </button>
+
+      <button class="nav-item" data-view="timers">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4.5" y="6" width="15" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 10h15" stroke="currentColor" stroke-width="1.6"/><path d="M8 9V4M16 9V4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Todos os timers</span>
+      </button>
+
+      <button class="nav-item" data-view="calendario">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M8 3v3.2M16 3v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="4" y="5.5" width="16" height="15" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 10h16" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>Calendário</span>
+      </button>
+    </nav>
+
+    <!-- ====== CONTEÚDO ====== -->
+    <main class="content">
+
+      <!-- ---------- TELA: INÍCIO ---------- -->
+      <section id="view-inicio" class="view is-active">
+        <div class="today-card">
+          <p class="today-weekday" id="hoje-dia-semana">—</p>
+          <p class="today-daynumber" id="hoje-numero">—</p>
+          <p class="today-month" id="hoje-mes-ano">—</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Compromissos de hoje</h2>
+            <button class="btn btn-ghost" id="btn-ir-calendario">Abrir calendário</button>
+          </div>
+          <ul class="appointment-list" id="lista-compromissos-hoje">
+            <!-- preenchido via JS -->
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Timers em andamento</h2>
+            <button class="btn btn-ghost" id="btn-ir-timers">Ver todos</button>
+          </div>
+          <ul class="timer-list-compact" id="lista-timers-resumo">
+            <!-- preenchido via JS -->
+          </ul>
+        </div>
+      </section>
+
+      <!-- ---------- TELA: NOVO TIMER ---------- -->
+      <section id="view-novo-timer" class="view">
+        <h1 class="view-title">Novo timer</h1>
+
+        <div class="tab-switch">
+          <button class="tab-btn is-active" data-tipo="rapido">Timer rápido</button>
+          <button class="tab-btn" data-tipo="projeto">Timer de projeto</button>
+        </div>
+
+        <!-- Formulário: timer rápido (segundos/minutos/horas) -->
+        <form id="form-timer-rapido" class="panel form-panel">
+          <label class="field">
+            <span>Nome do timer</span>
+            <input type="text" id="rapido-nome" placeholder="Ex: Água no fogo" required maxlength="40">
+          </label>
+
+          <div class="field-row">
+            <label class="field field-small">
+              <span>Horas</span>
+              <input type="number" id="rapido-horas" min="0" max="99" value="0">
+            </label>
+            <label class="field field-small">
+              <span>Minutos</span>
+              <input type="number" id="rapido-minutos" min="0" max="59" value="5">
+            </label>
+            <label class="field field-small">
+              <span>Segundos</span>
+              <input type="number" id="rapido-segundos" min="0" max="59" value="0">
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Criar timer rápido</button>
+        </form>
+
+        <!-- Formulário: timer de projeto (data-alvo, meses à frente) -->
+        <form id="form-timer-projeto" class="panel form-panel is-hidden">
+          <label class="field">
+            <span>Nome do projeto</span>
+            <input type="text" id="projeto-nome" placeholder="Ex: Lançamento do site" required maxlength="60">
+          </label>
+
+          <label class="field">
+            <span>Data alvo</span>
+            <input type="date" id="projeto-data" required>
+          </label>
+
+          <label class="field">
+            <span>Notas (opcional)</span>
+            <textarea id="projeto-notas" rows="2" placeholder="Detalhes do projeto" maxlength="200"></textarea>
+          </label>
+
+          <button type="submit" class="btn btn-primary">Criar timer de projeto</button>
+        </form>
+      </section>
+
+      <!-- ---------- TELA: TODOS OS TIMERS ---------- -->
+      <section id="view-timers" class="view">
+        <h1 class="view-title">Todos os timers</h1>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Timers rápidos</h2>
+          </div>
+          <ul class="timer-list" id="lista-timers-rapidos">
+            <!-- preenchido via JS -->
+          </ul>
+          <p class="empty-state" id="vazio-timers-rapidos">Nenhum timer rápido por aqui ainda.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Timers de projeto</h2>
+          </div>
+          <ul class="timer-list" id="lista-timers-projeto">
+            <!-- preenchido via JS -->
+          </ul>
+          <p class="empty-state" id="vazio-timers-projeto">Nenhum projeto sendo acompanhado ainda.</p>
+        </div>
+      </section>
+
+      <!-- ---------- TELA: CALENDÁRIO ---------- -->
+      <section id="view-calendario" class="view">
+        <h1 class="view-title">Calendário</h1>
+
+        <div class="panel">
+          <div class="calendar-head">
+            <button class="btn btn-icon" id="btn-mes-anterior" aria-label="Mês anterior">‹</button>
+            <h2 id="calendario-mes-ano">—</h2>
+            <button class="btn btn-icon" id="btn-mes-seguinte" aria-label="Próximo mês">›</button>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>dom</span><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span>
+          </div>
+
+          <div class="calendar-grid" id="calendario-grid">
+            <!-- preenchido via JS -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ====== MODAL: compromissos de um dia ====== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="modal-data-titulo">—</h2>
+        <button class="btn btn-icon" id="modal-fechar" aria-label="Fechar">×</button>
+      </div>
+
+      <ul class="appointment-list" id="modal-lista-compromissos"></ul>
+
+      <form id="form-novo-compromisso" class="modal-form">
+        <label class="field">
+          <span>Horário</span>
+          <input type="time" id="compromisso-hora">
+        </label>
+        <label class="field">
+          <span>Título</span>
+          <input type="text" id="compromisso-titulo" placeholder="Ex: Reunião com equipe" required maxlength="60">
+        </label>
+        <button type="submit" class="btn btn-primary">Adicionar compromisso</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="timers.js"></script>
+  <script src="calendar.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

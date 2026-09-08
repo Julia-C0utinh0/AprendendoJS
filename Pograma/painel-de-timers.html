@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Timers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   TOKENS — cores, tipografia, espaçamentos
+   ========================================================= */
+:root {
+  --ink: #17262A;
+  --ink-soft: #1F3136;
+  --ink-softer: #274046;
+  --parchment: #F5F1E6;
+  --parchment-dim: #EBE4D3;
+  --line-on-dark: rgba(242, 239, 228, 0.12);
+  --line-on-light: rgba(23, 38, 42, 0.12);
+
+  --accent-amber: #E3A23D;
+  --accent-amber-dim: #a97427;
+  --accent-sage: #7FA37E;
+  --accent-sage-dim: #56755a;
+  --accent-coral: #D9705C;
+
+  --text-light: #F2EFE4;
+  --text-light-dim: rgba(242, 239, 228, 0.6);
+  --text-ink: #17262A;
+  --text-ink-dim: rgba(23, 38, 42, 0.6);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Work Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-card: 14px;
+  --radius-pill: 999px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--ink);
+  color: var(--text-light);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+button, input, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+h1, h2, h3 { font-family: var(--font-display); margin: 0; }
+
+/* =========================================================
+   LAYOUT GERAL
+   ========================================================= */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  padding: 40px 48px 80px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.view { display: none; }
+.view.is-active { display: block; animation: fade-in .25s ease; }
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.view-title {
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+/* =========================================================
+   NAVEGAÇÃO LATERAL
+   ========================================================= */
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--ink-soft);
+  border-right: 1px solid var(--line-on-dark);
+  padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0 12px;
+  margin-bottom: 28px;
+}
+
+.sidebar-brand-mark {
+  font-size: 22px;
+  color: var(--accent-amber);
+}
+
+.sidebar-brand-text {
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: 0.2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  color: var(--text-light-dim);
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+
+.nav-item:hover { background: var(--line-on-dark); color: var(--text-light); }
+
+.nav-item.is-active {
+  background: var(--ink-softer);
+  color: var(--text-light);
+}
+
+.nav-icon { width: 19px; height: 19px; flex-shrink: 0; }
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+.btn {
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: transform .1s ease, opacity .15s ease, background .15s ease;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--accent-amber);
+  color: var(--ink);
+}
+.btn-primary:hover { background: #eeb256; }
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--line-on-dark);
+  color: var(--text-light-dim);
+  padding: 7px 14px;
+  font-size: 14px;
+}
+.btn-ghost:hover { color: var(--text-light); border-color: var(--text-light-dim); }
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid var(--line-on-light);
+  color: var(--text-ink);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-icon:hover { background: var(--line-on-light); }
+
+.btn-danger-text {
+  background: none;
+  border: none;
+  color: var(--accent-coral);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 6px;
+}
+.btn-danger-text:hover { text-decoration: underline; }
+
+/* =========================================================
+   CARTÃO DE "HOJE" (destaque tipográfico da home)
+   ========================================================= */
+.today-card {
+  margin-bottom: 32px;
+}
+
+.today-weekday {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-light-dim);
+  text-transform: lowercase;
+}
+
+.today-daynumber {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 108px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent-amber);
+}
+
+.today-month {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-light-dim);
+}
+
+/* =========================================================
+   PAINÉIS (cartões claros de conteúdo)
+   ========================================================= */
+.panel {
+  background: var(--parchment);
+  color: var(--text-ink);
+  border-radius: var(--radius-card);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.panel-head h2 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.empty-state {
+  color: var(--text-ink-dim);
+  font-size: 14px;
+  margin: 6px 0 2px;
+}
+
+/* =========================================================
+   LISTA DE COMPROMISSOS
+   ========================================================= */
+.appointment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.appointment-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-on-light);
+}
+.appointment-list li:last-child { border-bottom: none; }
+
+.appointment-time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--accent-amber-dim);
+  min-width: 48px;
+}
+
+.appointment-title { flex: 1; }
+
+/* =========================================================
+   FORMULÁRIOS
+   ========================================================= */
+.tab-switch {
+  display: inline-flex;
+  background: var(--ink-soft);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  margin-bottom: 20px;
+  gap: 4px;
+}
+
+.tab-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-light-dim);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.tab-btn.is-active {
+  background: var(--accent-amber);
+  color: var(--ink);
+}
+
+.form-panel { display: flex; flex-direction: column; gap: 16px; }
+.form-panel.is-hidden { display: none; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-ink-dim);
+}
+
+.field input, .field textarea {
+  border: 1px solid var(--line-on-light);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--text-ink);
+}
+
+.field input:focus, .field textarea:focus {
+  outline: 2px solid var(--accent-amber);
+  outline-offset: 1px;
+}
+
+.field-row { display: flex; gap: 12px; }
+.field-small { flex: 1; }
+
+/* =========================================================
+   LISTAS DE TIMERS
+   ========================================================= */
+.timer-list, .timer-list-compact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.timer-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-on-light);
+}
+.timer-card:last-child { border-bottom: none; }
+
+.timer-card-info { flex: 1; min-width: 0; }
+
+.timer-card-name {
+  font-weight: 600;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timer-card-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-ink-dim);
+}
+
+.timer-card-value {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent-sage-dim);
+  white-space: nowrap;
+}
+
+.timer-card-value.is-urgent { color: var(--accent-coral); }
+
+.timer-card-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.timer-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--line-on-light);
+  border-radius: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.timer-progress-fill {
+  height: 100%;
+  background: var(--accent-amber);
+  border-radius: 4px;
+  transition: width .3s linear;
+}
+
+.timer-list-compact li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-on-light);
+  font-size: 14px;
+}
+.timer-list-compact li:last-child { border-bottom: none; }
+
+/* =========================================================
+   CALENDÁRIO
+   ========================================================= */
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.calendar-head h2 { font-size: 19px; font-weight: 500; text-transform: capitalize; }
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-ink-dim);
+  margin-bottom: 6px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px 2px 4px;
+  gap: 4px;
+  color: var(--text-ink);
+}
+
+.calendar-day:hover { background: var(--parchment-dim); }
+
+.calendar-day.is-empty { cursor: default; visibility: hidden; }
+
+.calendar-day.is-today {
+  border-color: var(--accent-amber);
+  font-weight: 600;
+}
+
+.calendar-day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-sage);
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 38, 42, 0.55);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+.modal-overlay.is-active { display: flex; }
+
+.modal {
+  background: var(--parchment);
+  color: var(--text-ink);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.modal-head h2 { font-size: 18px; font-weight: 500; text-transform: capitalize; }
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-on-light);
+}
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+@media (max-width: 720px) {
+  .app { flex-direction: column; }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 10px 6px;
+    border-right: none;
+    border-bottom: 1px solid var(--line-on-dark);
+    order: 2;
+    position: sticky;
+    bottom: 0;
+  }
+
+  .sidebar-brand { display: none; }
+  .nav-item { flex-direction: column; gap: 4px; font-size: 11px; padding: 8px 6px; }
+
+  .content { padding: 28px 20px 100px; order: 1; }
+
+  .today-daynumber { font-size: 84px; }
+
+  .field-row { flex-direction: column; }
+}
+
+/* Respeita preferência por menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ====== NAVEGAÇÃO LATERAL ====== -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-mark">⏱</span>
+        <span class="sidebar-brand-text">Painel</span>
+      </div>
+
+      <button class="nav-item is-active" data-view="inicio">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M4 11.5 12 4l8 7.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Início</span>
+      </button>
+
+      <button class="nav-item" data-view="novo-timer">
+        <svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4l3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Novo timer</span>
+      </button>
+
+      <button class="nav-item" data-view="timers">
+        <svg viewBox="0 0 24 24" class="nav-icon"><rect x="4.5" y="6" width="15" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 10h15" stroke="currentColor" stroke-width="1.6"/><path d="M8 9V4M16 9V4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Todos os timers</span>
+      </button>
+
+      <button class="nav-item" data-view="calendario">
+        <svg viewBox="0 0 24 24" class="nav-icon"><path d="M8 3v3.2M16 3v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><rect x="4" y="5.5" width="16" height="15" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 10h16" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>Calendário</span>
+      </button>
+    </nav>
+
+    <!-- ====== CONTEÚDO ====== -->
+    <main class="content">
+
+      <!-- ---------- TELA: INÍCIO ---------- -->
+      <section id="view-inicio" class="view is-active">
+        <div class="today-card">
+          <p class="today-weekday" id="hoje-dia-semana">—</p>
+          <p class="today-daynumber" id="hoje-numero">—</p>
+          <p class="today-month" id="hoje-mes-ano">—</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Compromissos de hoje</h2>
+            <button class="btn btn-ghost" id="btn-ir-calendario">Abrir calendário</button>
+          </div>
+          <ul class="appointment-list" id="lista-compromissos-hoje">
+            <!-- preenchido via JS -->
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Timers em andamento</h2>
+            <button class="btn btn-ghost" id="btn-ir-timers">Ver todos</button>
+          </div>
+          <ul class="timer-list-compact" id="lista-timers-resumo">
+            <!-- preenchido via JS -->
+          </ul>
+        </div>
+      </section>
+
+      <!-- ---------- TELA: NOVO TIMER ---------- -->
+      <section id="view-novo-timer" class="view">
+        <h1 class="view-title">Novo timer</h1>
+
+        <div class="tab-switch">
+          <button class="tab-btn is-active" data-tipo="rapido">Timer rápido</button>
+          <button class="tab-btn" data-tipo="projeto">Timer de projeto</button>
+        </div>
+
+        <!-- Formulário: timer rápido (segundos/minutos/horas) -->
+        <form id="form-timer-rapido" class="panel form-panel">
+          <label class="field">
+            <span>Nome do timer</span>
+            <input type="text" id="rapido-nome" placeholder="Ex: Água no fogo" required maxlength="40">
+          </label>
+
+          <div class="field-row">
+            <label class="field field-small">
+              <span>Horas</span>
+              <input type="number" id="rapido-horas" min="0" max="99" value="0">
+            </label>
+            <label class="field field-small">
+              <span>Minutos</span>
+              <input type="number" id="rapido-minutos" min="0" max="59" value="5">
+            </label>
+            <label class="field field-small">
+              <span>Segundos</span>
+              <input type="number" id="rapido-segundos" min="0" max="59" value="0">
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Criar timer rápido</button>
+        </form>
+
+        <!-- Formulário: timer de projeto (data-alvo, meses à frente) -->
+        <form id="form-timer-projeto" class="panel form-panel is-hidden">
+          <label class="field">
+            <span>Nome do projeto</span>
+            <input type="text" id="projeto-nome" placeholder="Ex: Lançamento do site" required maxlength="60">
+          </label>
+
+          <label class="field">
+            <span>Data alvo</span>
+            <input type="date" id="projeto-data" required>
+          </label>
+
+          <label class="field">
+            <span>Notas (opcional)</span>
+            <textarea id="projeto-notas" rows="2" placeholder="Detalhes do projeto" maxlength="200"></textarea>
+          </label>
+
+          <button type="submit" class="btn btn-primary">Criar timer de projeto</button>
+        </form>
+      </section>
+
+      <!-- ---------- TELA: TODOS OS TIMERS ---------- -->
+      <section id="view-timers" class="view">
+        <h1 class="view-title">Todos os timers</h1>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Timers rápidos</h2>
+          </div>
+          <ul class="timer-list" id="lista-timers-rapidos">
+            <!-- preenchido via JS -->
+          </ul>
+          <p class="empty-state" id="vazio-timers-rapidos">Nenhum timer rápido por aqui ainda.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Timers de projeto</h2>
+          </div>
+          <ul class="timer-list" id="lista-timers-projeto">
+            <!-- preenchido via JS -->
+          </ul>
+          <p class="empty-state" id="vazio-timers-projeto">Nenhum projeto sendo acompanhado ainda.</p>
+        </div>
+      </section>
+
+      <!-- ---------- TELA: CALENDÁRIO ---------- -->
+      <section id="view-calendario" class="view">
+        <h1 class="view-title">Calendário</h1>
+
+        <div class="panel">
+          <div class="calendar-head">
+            <button class="btn btn-icon" id="btn-mes-anterior" aria-label="Mês anterior">‹</button>
+            <h2 id="calendario-mes-ano">—</h2>
+            <button class="btn btn-icon" id="btn-mes-seguinte" aria-label="Próximo mês">›</button>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>dom</span><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span>
+          </div>
+
+          <div class="calendar-grid" id="calendario-grid">
+            <!-- preenchido via JS -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ====== MODAL: compromissos de um dia ====== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="modal-data-titulo">—</h2>
+        <button class="btn btn-icon" id="modal-fechar" aria-label="Fechar">×</button>
+      </div>
+
+      <ul class="appointment-list" id="modal-lista-compromissos"></ul>
+
+      <form id="form-novo-compromisso" class="modal-form">
+        <label class="field">
+          <span>Horário</span>
+          <input type="time" id="compromisso-hora">
+        </label>
+        <label class="field">
+          <span>Título</span>
+          <input type="text" id="compromisso-titulo" placeholder="Ex: Reunião com equipe" required maxlength="60">
+        </label>
+        <button type="submit" class="btn btn-primary">Adicionar compromisso</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+/* =========================================================
+   storage.js
+   Tudo relacionado a salvar/ler dados fica neste arquivo.
+   Se um dia quiser trocar localStorage por outra coisa
+   (ex: um servidor), só precisa mexer aqui.
+   ========================================================= */
+
+const STORAGE_KEYS = {
+  TIMERS: "painel_timers",
+  COMPROMISSOS: "painel_compromissos",
+};
+
+/**
+ * Lê uma lista salva no localStorage.
+ * Se não existir nada ainda, devolve uma lista vazia.
+ */
+function lerLista(chave) {
+  try {
+    const bruto = localStorage.getItem(chave);
+    return bruto ? JSON.parse(bruto) : [];
+  } catch (erro) {
+    console.error("Erro ao ler storage:", erro);
+    return [];
+  }
+}
+
+/**
+ * Salva uma lista no localStorage.
+ */
+function salvarLista(chave, lista) {
+  try {
+    localStorage.setItem(chave, JSON.stringify(lista));
+  } catch (erro) {
+    console.error("Erro ao salvar storage:", erro);
+  }
+}
+
+/* ---------- Timers ---------- */
+
+function carregarTimers() {
+  return lerLista(STORAGE_KEYS.TIMERS);
+}
+
+function salvarTimers(timers) {
+  salvarLista(STORAGE_KEYS.TIMERS, timers);
+}
+
+/* ---------- Compromissos ---------- */
+
+function carregarCompromissos() {
+  return lerLista(STORAGE_KEYS.COMPROMISSOS);
+}
+
+function salvarCompromissos(compromissos) {
+  salvarLista(STORAGE_KEYS.COMPROMISSOS, compromissos);
+}
+
+/**
+ * Gera um id simples e único o bastante para este app.
+ */
+function gerarId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+
+/* =========================================================
+   timers.js
+   Regras dos dois tipos de timer:
+   - "rapido"  -> contagem regressiva em horas/min/seg
+   - "projeto" -> contagem até (ou desde) uma data alvo,
+                  pensado para coisas que duram meses
+   ========================================================= */
+
+/* ---------- Criação ---------- */
+
+function criarTimerRapido(nome, horas, minutos, segundos) {
+  const duracaoTotal = (horas * 3600) + (minutos * 60) + segundos;
+  const agora = Date.now();
+  return {
+    id: gerarId(),
+    tipo: "rapido",
+    nome: nome,
+    duracaoTotalSegundos: duracaoTotal,
+    terminaEm: agora + duracaoTotal * 1000,
+    restantePausado: null, // só usado quando status === "pausado"
+    status: "rodando",     // "rodando" | "pausado" | "concluido"
+    criadoEm: agora,
+  };
+}
+
+function criarTimerProjeto(nome, dataAlvoISO, notas) {
+  return {
+    id: gerarId(),
+    tipo: "projeto",
+    nome: nome,
+    dataAlvo: dataAlvoISO, // string "AAAA-MM-DD"
+    notas: notas || "",
+    criadoEm: Date.now(),
+  };
+}
+
+/* ---------- Timers rápidos: tempo restante e controles ---------- */
+
+function obterSegundosRestantes(timer) {
+  if (timer.status === "pausado") return timer.restantePausado;
+  const restante = Math.round((timer.terminaEm - Date.now()) / 1000);
+  return Math.max(restante, 0);
+}
+
+function alternarPausaTimerRapido(timer) {
+  if (timer.status === "rodando") {
+    timer.restantePausado = obterSegundosRestantes(timer);
+    timer.status = "pausado";
+  } else if (timer.status === "pausado") {
+    timer.terminaEm = Date.now() + timer.restantePausado * 1000;
+    timer.restantePausado = null;
+    timer.status = "rodando";
+  }
+  return timer;
+}
+
+function reiniciarTimerRapido(timer) {
+  timer.terminaEm = Date.now() + timer.duracaoTotalSegundos * 1000;
+  timer.restantePausado = null;
+  timer.status = "rodando";
+  return timer;
+}
+
+/* ---------- Timers de projeto: diferença de calendário ---------- */
+
+/**
+ * Calcula a diferença entre duas datas em anos / meses / dias,
+ * de um jeito que bate com o calendário de verdade
+ * (não é só "dividir por 30").
+ */
+function diferencaEmComponentes(de, para) {
+  const passou = para < de;
+  const inicio = passou ? para : de;
+  const fim = passou ? de : para;
+
+  let anos = fim.getFullYear() - inicio.getFullYear();
+  let meses = fim.getMonth() - inicio.getMonth();
+  let dias = fim.getDate() - inicio.getDate();
+
+  if (dias < 0) {
+    meses -= 1;
+    const diasNoMesAnterior = new Date(fim.getFullYear(), fim.getMonth(), 0).getDate();
+    dias += diasNoMesAnterior;
+  }
+  if (meses < 0) {
+    anos -= 1;
+    meses += 12;
+  }
+
+  return { anos, meses, dias, passou };
+}
+
+function obterDiferencaProjeto(timer) {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const alvo = new Date(timer.dataAlvo + "T00:00:00");
+  return diferencaEmComponentes(hoje, alvo);
+}
+
+/* ---------- Formatação ---------- */
+
+function formatarHMS(totalSegundos) {
+  const h = Math.floor(totalSegundos / 3600);
+  const m = Math.floor((totalSegundos % 3600) / 60);
+  const s = totalSegundos % 60;
+  const dois = (n) => String(n).padStart(2, "0");
+  return h > 0 ? `${dois(h)}:${dois(m)}:${dois(s)}` : `${dois(m)}:${dois(s)}`;
+}
+
+function formatarComponentes({ anos, meses, dias }) {
+  const partes = [];
+  if (anos > 0) partes.push(`${anos} ano${anos > 1 ? "s" : ""}`);
+  if (meses > 0) partes.push(`${meses} ${meses > 1 ? "meses" : "mês"}`);
+  if (dias > 0 || partes.length === 0) partes.push(`${dias} dia${dias !== 1 ? "s" : ""}`);
+  return partes.join(", ");
+}
+
+function formatarTextoProjeto(timer) {
+  const diff = obterDiferencaProjeto(timer);
+  const texto = formatarComponentes(diff);
+  if (diff.anos === 0 && diff.meses === 0 && diff.dias === 0) return "É hoje";
+  return diff.passou ? `${texto} atrás` : `faltam ${texto}`;
+}
+
+
+/* =========================================================
+   calendar.js
+   Constrói a grade do mês e cuida dos compromissos
+   (cada compromisso pertence a uma data "AAAA-MM-DD").
+   ========================================================= */
+
+const NOMES_MESES = [
+  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+];
+
+const NOMES_DIAS_SEMANA = [
+  "domingo", "segunda-feira", "terça-feira", "quarta-feira",
+  "quinta-feira", "sexta-feira", "sábado",
+];
+
+// Mês/ano atualmente exibidos no calendário (não precisa ser o mês de hoje)
+let calendarioAno = new Date().getFullYear();
+let calendarioMes = new Date().getMonth(); // 0 a 11
+
+/* ---------- Utilidades de data ---------- */
+
+function formatarDataISO(dataObj) {
+  const ano = dataObj.getFullYear();
+  const mes = String(dataObj.getMonth() + 1).padStart(2, "0");
+  const dia = String(dataObj.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+function hojeISO() {
+  return formatarDataISO(new Date());
+}
+
+/* ---------- Compromissos ---------- */
+
+function obterCompromissosPorData(dataISO) {
+  return carregarCompromissos()
+    .filter((c) => c.data === dataISO)
+    .sort((a, b) => (a.hora || "99:99").localeCompare(b.hora || "99:99"));
+}
+
+function adicionarCompromisso(dataISO, hora, titulo) {
+  const compromissos = carregarCompromissos();
+  compromissos.push({
+    id: gerarId(),
+    data: dataISO,
+    hora: hora || "",
+    titulo: titulo,
+  });
+  salvarCompromissos(compromissos);
+}
+
+function removerCompromisso(id) {
+  const compromissos = carregarCompromissos().filter((c) => c.id !== id);
+  salvarCompromissos(compromissos);
+}
+
+/* ---------- Navegação de mês ---------- */
+
+function mudarMesCalendario(delta) {
+  calendarioMes += delta;
+  if (calendarioMes > 11) { calendarioMes = 0; calendarioAno += 1; }
+  if (calendarioMes < 0) { calendarioMes = 11; calendarioAno -= 1; }
+  renderizarCalendario();
+}
+
+/* ---------- Renderização da grade ---------- */
+
+function renderizarCalendario() {
+  const titulo = document.getElementById("calendario-mes-ano");
+  titulo.textContent = `${NOMES_MESES[calendarioMes]} de ${calendarioAno}`;
+
+  const grid = document.getElementById("calendario-grid");
+  grid.innerHTML = "";
+
+  const primeiroDiaDoMes = new Date(calendarioAno, calendarioMes, 1);
+  const diaDaSemanaInicial = primeiroDiaDoMes.getDay(); // 0 = domingo
+  const totalDiasNoMes = new Date(calendarioAno, calendarioMes + 1, 0).getDate();
+  const hoje = hojeISO();
+
+  // Espaços vazios antes do dia 1
+  for (let i = 0; i < diaDaSemanaInicial; i++) {
+    const vazio = document.createElement("div");
+    vazio.className = "calendar-day is-empty";
+    grid.appendChild(vazio);
+  }
+
+  // Um botão por dia do mês
+  for (let dia = 1; dia <= totalDiasNoMes; dia++) {
+    const dataISO = formatarDataISO(new Date(calendarioAno, calendarioMes, dia));
+    const botaoDia = document.createElement("button");
+    botaoDia.className = "calendar-day";
+    if (dataISO === hoje) botaoDia.classList.add("is-today");
+
+    const numero = document.createElement("span");
+    numero.textContent = dia;
+    botaoDia.appendChild(numero);
+
+    if (obterCompromissosPorData(dataISO).length > 0) {
+      const ponto = document.createElement("span");
+      ponto.className = "calendar-day-dot";
+      botaoDia.appendChild(ponto);
+    }
+
+    botaoDia.addEventListener("click", () => abrirModalDoDia(dataISO));
+    grid.appendChild(botaoDia);
+  }
+}
+
+
+/* =========================================================
+   app.js
+   Liga tudo: navegação entre telas, formulários,
+   renderização das listas e o loop que atualiza os timers.
+   ========================================================= */
+
+let dataDoModalAberto = null; // guarda qual dia está aberto no modal de compromissos
+
+/* =========================================================
+   NAVEGAÇÃO ENTRE TELAS
+   ========================================================= */
+
+function mostrarView(nomeView) {
+  document.querySelectorAll(".view").forEach((el) => el.classList.remove("is-active"));
+  document.getElementById(`view-${nomeView}`).classList.add("is-active");
+
+  document.querySelectorAll(".nav-item").forEach((el) => {
+    el.classList.toggle("is-active", el.dataset.view === nomeView);
+  });
+
+  if (nomeView === "calendario") renderizarCalendario();
+  if (nomeView === "timers") renderizarListaTimers();
+  if (nomeView === "inicio") renderizarInicio();
+}
+
+function configurarNavegacao() {
+  document.querySelectorAll(".nav-item").forEach((botao) => {
+    botao.addEventListener("click", () => mostrarView(botao.dataset.view));
+  });
+
+  document.getElementById("btn-ir-calendario").addEventListener("click", () => mostrarView("calendario"));
+  document.getElementById("btn-ir-timers").addEventListener("click", () => mostrarView("timers"));
+}
+
+/* =========================================================
+   TELA: INÍCIO
+   ========================================================= */
+
+function renderizarInicio() {
+  const agora = new Date();
+
+  document.getElementById("hoje-dia-semana").textContent = NOMES_DIAS_SEMANA[agora.getDay()];
+  document.getElementById("hoje-numero").textContent = agora.getDate();
+  document.getElementById("hoje-mes-ano").textContent = `${NOMES_MESES[agora.getMonth()]} de ${agora.getFullYear()}`;
+
+  // Compromissos de hoje
+  const listaCompromissos = document.getElementById("lista-compromissos-hoje");
+  const compromissosHoje = obterCompromissosPorData(hojeISO());
+  listaCompromissos.innerHTML = "";
+
+  if (compromissosHoje.length === 0) {
+    listaCompromissos.appendChild(criarItemVazio("Nenhum compromisso marcado para hoje."));
+  } else {
+    compromissosHoje.forEach((c) => listaCompromissos.appendChild(criarItemCompromisso(c, false)));
+  }
+
+  renderizarResumoTimers();
+}
+
+function criarItemVazio(texto) {
+  const li = document.createElement("li");
+  li.textContent = texto;
+  li.style.color = "var(--text-ink-dim)";
+  li.style.borderBottom = "none";
+  return li;
+}
+
+function criarItemCompromisso(compromisso, comBotaoExcluir) {
+  const li = document.createElement("li");
+
+  const hora = document.createElement("span");
+  hora.className = "appointment-time";
+  hora.textContent = compromisso.hora || "—";
+  li.appendChild(hora);
+
+  const titulo = document.createElement("span");
+  titulo.className = "appointment-title";
+  titulo.textContent = compromisso.titulo;
+  li.appendChild(titulo);
+
+  if (comBotaoExcluir) {
+    const botaoExcluir = document.createElement("button");
+    botaoExcluir.className = "btn-danger-text";
+    botaoExcluir.textContent = "remover";
+    botaoExcluir.addEventListener("click", () => {
+      removerCompromisso(compromisso.id);
+      abrirModalDoDia(dataDoModalAberto);
+      renderizarCalendario();
+      renderizarInicio();
+    });
+    li.appendChild(botaoExcluir);
+  }
+
+  return li;
+}
+
+function renderizarResumoTimers() {
+  const lista = document.getElementById("lista-timers-resumo");
+  lista.innerHTML = "";
+
+  const timers = carregarTimers();
+  const rapidosAtivos = timers.filter((t) => t.tipo === "rapido" && t.status !== "concluido");
+  const projetosFuturos = timers
+    .filter((t) => t.tipo === "projeto")
+    .sort((a, b) => a.dataAlvo.localeCompare(b.dataAlvo))
+    .slice(0, 3);
+
+  const itens = [...rapidosAtivos, ...projetosFuturos];
+
+  if (itens.length === 0) {
+    lista.appendChild(criarItemVazio("Nenhum timer criado ainda."));
+    return;
+  }
+
+  itens.forEach((timer) => {
+    const li = document.createElement("li");
+    const nome = document.createElement("span");
+    nome.textContent = timer.nome;
+
+    const valor = document.createElement("span");
+    valor.textContent = timer.tipo === "rapido"
+      ? formatarHMS(obterSegundosRestantes(timer))
+      : formatarTextoProjeto(timer);
+
+    li.appendChild(nome);
+    li.appendChild(valor);
+    lista.appendChild(li);
+  });
+}
+
+/* =========================================================
+   TELA: NOVO TIMER
+   ========================================================= */
+
+function configurarFormularioNovoTimer() {
+  const abas = document.querySelectorAll(".tab-btn");
+  const formRapido = document.getElementById("form-timer-rapido");
+  const formProjeto = document.getElementById("form-timer-projeto");
+
+  abas.forEach((aba) => {
+    aba.addEventListener("click", () => {
+      abas.forEach((a) => a.classList.toggle("is-active", a === aba));
+      const ehRapido = aba.dataset.tipo === "rapido";
+      formRapido.classList.toggle("is-hidden", !ehRapido);
+      formProjeto.classList.toggle("is-hidden", ehRapido);
+    });
+  });
+
+  formRapido.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+    const nome = document.getElementById("rapido-nome").value.trim();
+    const horas = Number(document.getElementById("rapido-horas").value) || 0;
+    const minutos = Number(document.getElementById("rapido-minutos").value) || 0;
+    const segundos = Number(document.getElementById("rapido-segundos").value) || 0;
+
+    if (!nome || (horas === 0 && minutos === 0 && segundos === 0)) return;
+
+    const timers = carregarTimers();
+    timers.push(criarTimerRapido(nome, horas, minutos, segundos));
+    salvarTimers(timers);
+
+    formRapido.reset();
+    document.getElementById("rapido-minutos").value = 5;
+    mostrarView("timers");
+  });
+
+  formProjeto.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+    const nome = document.getElementById("projeto-nome").value.trim();
+    const data = document.getElementById("projeto-data").value;
+    const notas = document.getElementById("projeto-notas").value.trim();
+
+    if (!nome || !data) return;
+
+    const timers = carregarTimers();
+    timers.push(criarTimerProjeto(nome, data, notas));
+    salvarTimers(timers);
+
+    formProjeto.reset();
+    mostrarView("timers");
+  });
+}
+
+/* =========================================================
+   TELA: TODOS OS TIMERS
+   ========================================================= */
+
+function renderizarListaTimers() {
+  const timers = carregarTimers();
+  const rapidos = timers.filter((t) => t.tipo === "rapido");
+  const projetos = timers.filter((t) => t.tipo === "projeto").sort((a, b) => a.dataAlvo.localeCompare(b.dataAlvo));
+
+  const listaRapidos = document.getElementById("lista-timers-rapidos");
+  const listaProjetos = document.getElementById("lista-timers-projeto");
+  listaRapidos.innerHTML = "";
+  listaProjetos.innerHTML = "";
+
+  document.getElementById("vazio-timers-rapidos").style.display = rapidos.length ? "none" : "block";
+  document.getElementById("vazio-timers-projeto").style.display = projetos.length ? "none" : "block";
+
+  rapidos.forEach((timer) => listaRapidos.appendChild(criarCardTimerRapido(timer)));
+  projetos.forEach((timer) => listaProjetos.appendChild(criarCardTimerProjeto(timer)));
+}
+
+function criarCardTimerRapido(timer) {
+  const restante = obterSegundosRestantes(timer);
+  if (restante === 0 && timer.status === "rodando") timer.status = "concluido";
+
+  const li = document.createElement("li");
+  li.className = "timer-card";
+
+  const info = document.createElement("div");
+  info.className = "timer-card-info";
+
+  const nome = document.createElement("p");
+  nome.className = "timer-card-name";
+  nome.textContent = timer.nome;
+  info.appendChild(nome);
+
+  const sub = document.createElement("p");
+  sub.className = "timer-card-sub";
+  sub.textContent = timer.status === "concluido" ? "concluído"
+    : timer.status === "pausado" ? "pausado"
+    : "em andamento";
+  info.appendChild(sub);
+
+  const progresso = document.createElement("div");
+  progresso.className = "timer-progress";
+  const preenchimento = document.createElement("div");
+  preenchimento.className = "timer-progress-fill";
+  const percentual = timer.duracaoTotalSegundos > 0
+    ? Math.max(0, Math.min(100, (restante / timer.duracaoTotalSegundos) * 100))
+    : 0;
+  preenchimento.style.width = `${percentual}%`;
+  progresso.appendChild(preenchimento);
+  info.appendChild(progresso);
+
+  li.appendChild(info);
+
+  const valor = document.createElement("span");
+  valor.className = "timer-card-value" + (restante <= 10 && restante > 0 ? " is-urgent" : "");
+  valor.textContent = formatarHMS(restante);
+  li.appendChild(valor);
+
+  const acoes = document.createElement("div");
+  acoes.className = "timer-card-actions";
+
+  if (timer.status !== "concluido") {
+    const botaoPausar = document.createElement("button");
+    botaoPausar.className = "btn-icon";
+    botaoPausar.title = timer.status === "pausado" ? "Retomar" : "Pausar";
+    botaoPausar.textContent = timer.status === "pausado" ? "▶" : "⏸";
+    botaoPausar.addEventListener("click", () => {
+      alternarPausaTimerRapido(timer);
+      salvarTimers(carregarTimers().map((t) => (t.id === timer.id ? timer : t)));
+      renderizarListaTimers();
+    });
+    acoes.appendChild(botaoPausar);
+  }
+
+  const botaoReiniciar = document.createElement("button");
+  botaoReiniciar.className = "btn-icon";
+  botaoReiniciar.title = "Reiniciar";
+  botaoReiniciar.textContent = "↺";
+  botaoReiniciar.addEventListener("click", () => {
+    reiniciarTimerRapido(timer);
+    salvarTimers(carregarTimers().map((t) => (t.id === timer.id ? timer : t)));
+    renderizarListaTimers();
+  });
+  acoes.appendChild(botaoReiniciar);
+
+  const botaoExcluir = document.createElement("button");
+  botaoExcluir.className = "btn-danger-text";
+  botaoExcluir.textContent = "excluir";
+  botaoExcluir.addEventListener("click", () => {
+    salvarTimers(carregarTimers().filter((t) => t.id !== timer.id));
+    renderizarListaTimers();
+  });
+  acoes.appendChild(botaoExcluir);
+
+  li.appendChild(acoes);
+  return li;
+}
+
+function criarCardTimerProjeto(timer) {
+  const li = document.createElement("li");
+  li.className = "timer-card";
+
+  const info = document.createElement("div");
+  info.className = "timer-card-info";
+
+  const nome = document.createElement("p");
+  nome.className = "timer-card-name";
+  nome.textContent = timer.nome;
+  info.appendChild(nome);
+
+  const dataFormatada = new Date(timer.dataAlvo + "T00:00:00");
+  const sub = document.createElement("p");
+  sub.className = "timer-card-sub";
+  sub.textContent = timer.notas
+    ? `${timer.notas} · alvo: ${dataFormatada.getDate()} de ${NOMES_MESES[dataFormatada.getMonth()]} de ${dataFormatada.getFullYear()}`
+    : `alvo: ${dataFormatada.getDate()} de ${NOMES_MESES[dataFormatada.getMonth()]} de ${dataFormatada.getFullYear()}`;
+  info.appendChild(sub);
+
+  li.appendChild(info);
+
+  const valor = document.createElement("span");
+  valor.className = "timer-card-value";
+  valor.textContent = formatarTextoProjeto(timer);
+  li.appendChild(valor);
+
+  const acoes = document.createElement("div");
+  acoes.className = "timer-card-actions";
+  const botaoExcluir = document.createElement("button");
+  botaoExcluir.className = "btn-danger-text";
+  botaoExcluir.textContent = "excluir";
+  botaoExcluir.addEventListener("click", () => {
+    salvarTimers(carregarTimers().filter((t) => t.id !== timer.id));
+    renderizarListaTimers();
+  });
+  acoes.appendChild(botaoExcluir);
+  li.appendChild(acoes);
+
+  return li;
+}
+
+/* =========================================================
+   TELA: CALENDÁRIO + MODAL DE COMPROMISSOS
+   ========================================================= */
+
+function configurarCalendario() {
+  document.getElementById("btn-mes-anterior").addEventListener("click", () => mudarMesCalendario(-1));
+  document.getElementById("btn-mes-seguinte").addEventListener("click", () => mudarMesCalendario(1));
+}
+
+function abrirModalDoDia(dataISO) {
+  dataDoModalAberto = dataISO;
+  const data = new Date(dataISO + "T00:00:00");
+
+  document.getElementById("modal-data-titulo").textContent =
+    `${NOMES_DIAS_SEMANA[data.getDay()]}, ${data.getDate()} de ${NOMES_MESES[data.getMonth()]}`;
+
+  const lista = document.getElementById("modal-lista-compromissos");
+  lista.innerHTML = "";
+  const compromissos = obterCompromissosPorData(dataISO);
+
+  if (compromissos.length === 0) {
+    lista.appendChild(criarItemVazio("Nenhum compromisso neste dia."));
+  } else {
+    compromissos.forEach((c) => lista.appendChild(criarItemCompromisso(c, true)));
+  }
+
+  document.getElementById("modal-overlay").classList.add("is-active");
+}
+
+function fecharModal() {
+  document.getElementById("modal-overlay").classList.remove("is-active");
+  document.getElementById("form-novo-compromisso").reset();
+  dataDoModalAberto = null;
+}
+
+function configurarModal() {
+  document.getElementById("modal-fechar").addEventListener("click", fecharModal);
+
+  document.getElementById("modal-overlay").addEventListener("click", (evento) => {
+    if (evento.target.id === "modal-overlay") fecharModal();
+  });
+
+  document.getElementById("form-novo-compromisso").addEventListener("submit", (evento) => {
+    evento.preventDefault();
+    const hora = document.getElementById("compromisso-hora").value;
+    const titulo = document.getElementById("compromisso-titulo").value.trim();
+    if (!titulo || !dataDoModalAberto) return;
+
+    adicionarCompromisso(dataDoModalAberto, hora, titulo);
+    document.getElementById("form-novo-compromisso").reset();
+    abrirModalDoDia(dataDoModalAberto); // recarrega a lista do dia
+    renderizarCalendario();
+    renderizarInicio();
+  });
+}
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  configurarNavegacao();
+  configurarFormularioNovoTimer();
+  configurarCalendario();
+  configurarModal();
+
+  renderizarInicio();
+  renderizarCalendario();
+  renderizarListaTimers();
+
+  // Atualiza timers rápidos e o resumo da home a cada segundo
+  setInterval(() => {
+    const viewAtiva = document.querySelector(".view.is-active").id;
+    if (viewAtiva === "view-timers") renderizarListaTimers();
+    if (viewAtiva === "view-inicio") renderizarResumoTimers();
+  }, 1000);
+});
+
+  </script>
+</body>
+</html>
